@@ -1,10 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PlayerInput from '../components/PlayerInput';
 import PlayerList from '../components/PlayerList';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Link from 'next/link';
 
 const Home = () => {
   const [players, setPlayers] = useState([]);
+
+  // Carregar jogadores do localStorage ao iniciar
+  useEffect(() => {
+    const storedPlayers = localStorage.getItem('players');
+    if (storedPlayers) {
+      setPlayers(JSON.parse(storedPlayers));
+    }
+  }, []);
+
+  // Salvar jogadores no localStorage sempre que o array de jogadores for atualizado
+  useEffect(() => {
+    localStorage.setItem('players', JSON.stringify(players));
+  }, [players]);
 
   const handleAddPlayer = (name) => {
     setPlayers([...players, name]);
@@ -32,6 +46,13 @@ const Home = () => {
         onEditPlayer={handleEditPlayer}
         onRemovePlayer={handleRemovePlayer}
       />
+
+      {players.length >= 5 && (
+        <Link href="/game" className="btn btn-primary mt-4">
+          Iniciar Jogo
+        </Link>
+      )}
+
     </div>
   );
 };
